@@ -29,28 +29,43 @@ class Chart extends StatelessWidget {
       }
 
       // print( DateFormat.E().format(weekDay)[0] );
+      // print( DateFormat(DateFormat.WEEKDAY, 'pt_Br').format( weekDay )[0].toUpperCase()  );
       // print( totalSum );
 
       return {
-        'day':DateFormat.E().format(weekDay)[0] ,
+        //'day':DateFormat.E().format(weekDay)[0] ,
+        'day': DateFormat(DateFormat.WEEKDAY, 'pt_Br').format( weekDay )[0].toUpperCase(),
         'value': totalSum
       };
+    }).reversed.toList();
+  }
+
+  double get _weekTotalValor{
+    return groupedTransactions.fold(0.0 , (sum , tr){
+      return sum + (tr['value'] as double);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    groupedTransactions;
-
     return Card(
       elevation: 6,
       margin: EdgeInsets.all(15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: groupedTransactions.map((tr) {
-          return ChartBar(label: tr['day'] , value: tr['value'] , percentage: 0.3);
-        }).toList(),
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: groupedTransactions.map((tr) {
+            return Flexible(
+                fit:FlexFit.tight,
+                child: ChartBar(
+                    label: tr['day'] ,
+                    value: tr['value'] ,
+                    percentage: _weekTotalValor == 0 ? 0 : (tr['value'] as double) / _weekTotalValor
+                )
+            );
+          }).toList(),
+        ),
       ),
     );
   }

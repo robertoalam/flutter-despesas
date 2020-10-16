@@ -4,15 +4,13 @@ import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transaction;
+  final void Function(String) onRemove;
 
-  TransactionList(this.transaction);
+  TransactionList(this.transaction , this.onRemove);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 346,
-      //height: MediaQuery.of(context).size.height,
-      child: transaction.isEmpty?
+    return transaction.isEmpty?
       Column(
         children: [
           SizedBox(height: 20,),
@@ -30,45 +28,35 @@ class TransactionList extends StatelessWidget {
         itemBuilder: (context , index){
           final tr = transaction[index];
           return Card(
-            child: Row(
-              children: [
-                Container(
-                  margin:
-                  EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                        width: 2,
-                      )),
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "R\$ ${tr.value.toStringAsFixed(2)}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.purple,
-                    ),
+            elevation: 5,
+            margin: EdgeInsets.symmetric(
+              vertical: 8 , horizontal: 5
+            ),
+            child: ListTile(
+              leading: CircleAvatar(
+                radius: 30,
+                child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: FittedBox(
+                    child: Text("R\$${tr.value}"),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      tr.title,
-                      style: Theme.of(context).textTheme.headline6,
-                      //style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      DateFormat('dd/MM/y').format(tr.date),
-                      style: TextStyle(color: Colors.grey),
-                    )
-                  ],
-                )
-              ],
+              ),
+              title: Text(
+                tr.title ,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              subtitle: Text(
+                  DateFormat('dd/MM/y').format(tr.date)
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete),
+                color: Theme.of(context).errorColor,
+                onPressed: () => onRemove(tr.id),
+              ),
             ),
           );
         },
-      ),
-    );
+      );
   }
 }
