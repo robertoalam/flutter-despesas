@@ -10,18 +10,29 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return transaction.isEmpty?
-      Column(
-        children: [
-          SizedBox(height: 20,),
-          Text("Nenhuma Transacao Cadastrada!" , style: Theme.of(context).textTheme.headline6,),
-          SizedBox(height: 20,),
-          Container(
-            height: 200,
-            child:Image.asset('assets/images/waiting.png' , fit: BoxFit.cover,),
-          ),
-        ],
-      )
+    return transaction.isEmpty
+        ?
+        LayoutBuilder( builder: (ctx , constraints){
+          return Column(
+            children: [
+              SizedBox(
+                height: constraints.maxHeight * 0.05,
+              ),
+              Container(
+                height: constraints.maxHeight * 0.3,
+                child: Text("Nenhuma Transacao Cadastrada!" , style: Theme.of(context).textTheme.headline6,),
+              ),
+              SizedBox(
+                height: constraints.maxHeight * 0.05,
+              ),
+              Container(
+                height: constraints.maxHeight * 0.6 ,
+                child:Image.asset('assets/images/waiting.png' , fit: BoxFit.cover,),
+              ),
+            ],
+          );
+        })
+
       :
       ListView.builder(
         itemCount: transaction.length,
@@ -49,11 +60,19 @@ class TransactionList extends StatelessWidget {
               subtitle: Text(
                   DateFormat('dd/MM/y').format(tr.date)
               ),
-              trailing: IconButton(
-                icon: Icon(Icons.delete),
-                color: Theme.of(context).errorColor,
-                onPressed: () => onRemove(tr.id),
-              ),
+              trailing: MediaQuery.of(context).size.width > 400
+              ? FlatButton.icon(
+                  onPressed: () => onRemove(tr.id),
+                  icon: Icon(Icons.delete),
+                  label: Text("Excluir"),
+                  textColor: Theme.of(context).errorColor,
+              )
+              :
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  color: Theme.of(context).errorColor,
+                  onPressed: () => onRemove(tr.id),
+                ),
             ),
           );
         },
